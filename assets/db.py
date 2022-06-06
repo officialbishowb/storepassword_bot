@@ -1,7 +1,7 @@
 import sqlite3 as db
 from datetime import date
 
-conn = db.connect('assets/db/tg_bot.db')
+conn = db.connect('assets/tg_bot.db')
 
 def create_table():
     conn.execute('''CREATE TABLE users(
