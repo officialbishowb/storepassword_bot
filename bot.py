@@ -27,16 +27,28 @@ async def send_welcome(message: types.Message):
         await message.reply(f"""
 Hey  @<b>{message.from_user.username}</b>, \nI'm a bot that can help you save your account credentials.
                         
-Just send me your credentials in the format <code>email:pass</code> and I'll save them for you.
+Just send me your credentials in the format <code>service name</code> and <code>email:pass</code> and I'll save them for you.
+Example: <code>/save gmail testes@gmail.com:mypassword</code>
 
 For other commands, just send me /cmds.
                         """)
         
-    else:
+    elif(message.text.startswith('/help')):
         await message.reply(f"""
 Hey @<b>{message.from_user.username}</b>,
 Please contact the owner @beanonymousofficial for any help.
                             """)
+    
+    else:
+        await message.reply(f"""
+All available commands:
+
+/save <code>‹service name› ‹email:pass›</code> - Save your credentials
+/get <code>‹data_id (optional)›</code> - Get your credentials  
+/latest - Get the latest saved credentials
+/oldest - Get the oldest saved credentials
+/delete <code>‹data_id›</code> - Delete a saved credential
+""")
         
     
     
@@ -51,14 +63,20 @@ async def database_actions(message: types.Message):
             await message.reply("Please send me your credentials in the format /save <code>email:pass</code>!")
         else:
             await message.reply("Saving your credentials...")
-            email = credentials_to_save.split(":")[0]
-            password = credentials_to_save.split(":")[1]
-            if(db.insert_credentials(message.from_user.id, email, password)):
-                await message.edit_text("<b>Your credentials have been saved!</b>\nType /get to see all of your stored credentials.")
+            
+            user_input = message.text[5:].split(" ")
+            user_input = [value for value in user_input if value != ""]
+            service_name = user_input[0]
+            email = user_input[1].split(":")[0]
+            password = user_input[1].split(":")[1]
+            
+            if(db.insert_credentials(message.from_user.id, service_name, email, password)):
+                await bot.edit_message_text("<b>Your credentials have been saved!</b>\nType /get to see all of your stored credentials.",message.chat.id,message.message_id+1)
             else:
-                await message.edit_text("Something went wrong! Please try again.")
+                print(message.message_id)
+                await bot.edit_message_text("<b>Something went wrong! Please try again.</b>",message.chat.id,message.message_id+1)
             
-            
+
     elif(message.text.startswith("/get")):
         return "s"
         

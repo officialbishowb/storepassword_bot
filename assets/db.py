@@ -1,21 +1,33 @@
 import sqlite3 as db
 from datetime import date
+import os
+import log
 
-conn = db.connect('assets/tg_bot.db')
+def drop():
+    if os.path.exists("assets/bot.db"):
+        os.remove("assets/bot.db")
 
-def create_table():
+conn = db.connect('assets/bot.db')
+
+def create_tables():
     conn.execute('''CREATE TABLE users(
                         user_id INTEGER PRIMARY KEY,
-                        stored_data_id INTEGER,
+                        data_id INTEGER,
+                        service_name TEXT,
                         email TEXT,
                         password TEXT,
                         created_at DATE)
                 ''')
+    
+    conn.execute('''CREATE TABLE master_passwords(
+              user_id INTEGER PRIMARY KEY,
+              master_password TEXT,
+              FOREIGN KEY(user_id) REFERENCES users(user_id)
+        )''')
     conn.commit()
 
 
-
-def insert_credentials(user_id, email, password):
+def insert_credentials(user_id, service_name, email, password):
     """Insert a new user into the database
 
     Args:
@@ -25,13 +37,9 @@ def insert_credentials(user_id, email, password):
         password (string): account password (AES encrypted) the user wants to save
     """
     
-    try:
-        conn.execute('''INSERT INTO users(user_id, email, password, created_at)
-                    VALUES(?, ?, ?, ?)''', (user_id, email, password, date.today()))
-        conn.commit()
-    except Exception:
-        return False
-    return True
+    conn.execute('''INSERT INTO users(user_id, service_name, email, password, created_at)
+                VALUES(?, ?, ?, ?, ?)''', (user_id, service_name, email, password, date.today()))
+    conn.commit()
 
 
 def delete_row(user_id):
@@ -50,5 +58,6 @@ def delete_row(user_id):
 
 
 if __name__ == '__main__':
-    create_table()
+    drop()
+    create_tables()
     
