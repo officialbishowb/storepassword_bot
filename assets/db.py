@@ -1,7 +1,6 @@
 import sqlite3 as db
 from datetime import date
 import os
-import log
 
 def drop():
     if os.path.exists("assets/bot.db"):
