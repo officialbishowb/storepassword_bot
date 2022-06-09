@@ -2,27 +2,24 @@ import sqlite3 as db
 from datetime import date
 import os
 
-def drop():
-    if os.path.exists("assets/bot.db"):
-        os.remove("assets/bot.db")
 
 conn = db.connect('assets/bot.db')
 
 def create_tables():
-    conn.execute('''CREATE TABLE users(
-                        user_id INTEGER PRIMARY KEY,
-                        data_id INTEGER,
+    conn.execute('''CREATE TABLE IF NOT EXISTS users(
+                        user_id INTEGER,
+                        data_id INTEGER PRIMARY KEY,
                         service_name TEXT,
                         email TEXT,
                         password TEXT,
                         created_at DATE)
                 ''')
     
-    conn.execute('''CREATE TABLE master_passwords(
+    conn.execute('''CREATE TABLE IF NOT EXISTS encrypt_decrypt(
               user_id INTEGER PRIMARY KEY,
-              master_password TEXT,
-              FOREIGN KEY(user_id) REFERENCES users(user_id)
-        )''')
+              nonce BLOB,
+              tag BLOB,
+              master_password TEXT        )''')
     conn.commit()
 
 
@@ -39,6 +36,7 @@ def insert_credentials(user_id, service_name, email, password):
     conn.execute('''INSERT INTO users(user_id, service_name, email, password, created_at)
                 VALUES(?, ?, ?, ?, ?)''', (user_id, service_name, email, password, date.today()))
     conn.commit()
+    return True
 
 
 def delete_row(user_id):
@@ -49,14 +47,10 @@ def delete_row(user_id):
     """
     conn.execute('''DELETE FROM users WHERE user_id = ?''', (user_id,))
     conn.commit()
-
-
-
-
+    return True
 
 
 
 if __name__ == '__main__':
-    drop()
     create_tables()
     

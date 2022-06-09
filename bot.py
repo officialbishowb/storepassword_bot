@@ -64,16 +64,16 @@ async def database_actions(message: types.Message):
         else:
             await message.reply("Saving your credentials...")
             
+            # Get service name and credentials to save
             user_input = message.text[5:].split(" ")
             user_input = [value for value in user_input if value != ""]
-            service_name = user_input[0]
-            email = user_input[1].split(":")[0]
-            password = user_input[1].split(":")[1]
+            service_name = ' '.join([service_name for service_name in user_input if ":" not in service_name])
+            email = ''.join([email.split(":")[0] for email in user_input if ":" in email])
+            password = ''.join([password.split(":")[1] for password in user_input if ":" in password])
             
             if(db.insert_credentials(message.from_user.id, service_name, email, password)):
                 await bot.edit_message_text("<b>Your credentials have been saved!</b>\nType /get to see all of your stored credentials.",message.chat.id,message.message_id+1)
             else:
-                print(message.message_id)
                 await bot.edit_message_text("<b>Something went wrong! Please try again.</b>",message.chat.id,message.message_id+1)
             
 
