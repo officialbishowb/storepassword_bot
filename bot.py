@@ -1,20 +1,20 @@
-from pickle import TRUE
-from site import USER_BASE
-from tkinter import N
-import assets.functions as func
 import assets.db as db
+from assets.log import Log
+import assets.functions as func
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
 import os
 import time
 
-
 load_dotenv() # For ENV variables
 
 # GET ADMIN IDS
-USER_ADMIN = os.getenv('ADMIN_IDS')
-USER_ADMIN = [id for id in USER_ADMIN if id != ""]
+try:
+    USER_ADMIN = str(os.getenv('ADMIN_IDS')).split(',') if os.getenv('ADMIN_IDS').find(",") != -1 else os.getenv('ADMIN_IDS')
+    USER_ADMIN = [int(id) for id in USER_ADMIN if id != '']
+except Exception as e:
+    Log.append("ERROR", repr(e))
 
 API_TOKEN = os.getenv('BOT_TOKEN')
 # Configure logging
@@ -53,7 +53,7 @@ Please contact the owner @beanonymousofficial for any help.
                             """)
     
     else:
-        await message.reply(f"""
+        commands=f"""
 All available commands:
 
 /save <code>‹service name› ‹email:pass›</code> - Save your credentials
@@ -61,7 +61,14 @@ All available commands:
 /latest - Get the latest saved credentials
 /oldest - Get the oldest saved credentials
 /delete <code>‹number› or '<code>all</code>' </code> - Delete (a) saved credential(s)
-""")
+"""
+        if (message.from_user.id in USER_ADMIN):
+            commands+=f"""         
+<b>Admin commands:</b>
+/getlogs - Get the logs
+/clearlogs - Clear the logs"""
+        print(commands)
+        await message.reply(commands)
         
     
 ################################ USER + ADMIN COMMANDS ################################
@@ -152,12 +159,21 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['getlogs','clearlogs'])
-def admin_msg_handler(message: types.Message):
+@dp.message_handler(commands=['getlogs','clearlogs'],)
+async def admin_msg_handler(message: types.Message):
+    
+    log = Log()
     
     if(message.text.startswith("/getlogs")):
-      
+        try:
+            await bot.send_document(message.chat.id, open(log.filepath, 'rb'))
+        except Exception as e:
+            await message.reply("<b>No logs found!</b>")
+            log.append("WARNING",repr(e))
+
     else:
+        if(log.clear()):
+            await bot.send_message(message.chat.id,"<b>Logs cleared!</b>")
         
     
     
@@ -166,3 +182,4 @@ def admin_msg_handler(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+    db.create_tables()
