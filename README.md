@@ -6,7 +6,7 @@
 
 2.) Run `pip install -r requirements.txt`
 
-3.) Setup the following `.env` varaibles:
+3.) Setup the following `.env` variables:
 
 - `TELEGRAM_BOT_TOKEN` - Your Telegram Bot Token
 -  `MASTER_KEY` - A master key to create a password for encryption/decryption of passwords
