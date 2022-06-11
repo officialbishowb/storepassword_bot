@@ -64,8 +64,7 @@ All available commands:
             commands+=f"""         
 <b>Admin commands:</b>
 /dobackup - Send the backup file of the db
-/restoredb - Restore the db with given .db  
-'"""
+/restoredb - Restore the db with given .db  """
         await message.reply(commands)
         
     
@@ -90,7 +89,7 @@ async def database_actions(message: types.Message):
             user_input = [value for value in user_input if value != ""]
             service_name = ' '.join([service_name for service_name in user_input if ":" not in service_name])
             email = ''.join([email.split(":")[0] for email in user_input if ":" in email])
-            email = func.encrypt(password,db.get_master_key(message.from_user.id))
+            email = func.encrypt(email,db.get_master_key(message.from_user.id))
             
             ## Do this just once as password can contain : as special char..
             password =""
