@@ -1,5 +1,3 @@
-from curses.ascii import US
-from email import message
 import db
 import functions as func
 import logging
@@ -15,7 +13,6 @@ load_dotenv() # For ENV variables
 
 USER_ADMIN = str(os.getenv('ADMIN_IDS')).split(',') if os.getenv('ADMIN_IDS').find(",") != -1 else str(os.getenv('ADMIN_IDS'))
 USER_ADMIN = [int(id) for id in USER_ADMIN if id != '']
-print(USER_ADMIN)
 
 API_TOKEN = os.getenv('BOT_TOKEN')
 # Configure logging
@@ -166,11 +163,11 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['dobackup''restoredb'])
+@dp.message_handler(commands=['dobackup','restoredb'])
 async def admin_msg_handler(message: types.Message):
     
     if message.from_user.id in USER_ADMIN:
-        print("Here")
+
         if(message.text.startswith("/dobackup")):
             await message.reply("<b>Sending the .db backup file...</b>")
             shutil.copy("bot.db", "backup.db")
@@ -178,9 +175,10 @@ async def admin_msg_handler(message: types.Message):
         
         else:
             await message.reply("Send me the .db file to restore the database.")
-            dp.register_next_step_handler(message, func.restore_db)
+            await message.reply("Coming soon...")
+            #dp.register_next_step_handler(message, restore_db)
 
-async def restore_db(message: types.Message):
+async def restore_db(message):
     file_id = message.document.file_id
     file_path = await bot.get_file_path(file_id)
     bot.download_file(file_path, "bot.db")
