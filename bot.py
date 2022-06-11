@@ -67,7 +67,6 @@ All available commands:
 <b>Admin commands:</b>
 /getlogs - Get the logs
 /clearlogs - Clear the logs"""
-        print(commands)
         await message.reply(commands)
         
     

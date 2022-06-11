@@ -124,7 +124,7 @@ def master_key_exist(user_id):
     try:
         cursor = conn.execute('''SELECT * FROM master_keys WHERE user_id = ?''', (user_id,))
     except Exception as e:
-        Log.append("ERROR",repr(e))
+        Log.append("ERROR",e.message)
     return cursor.fetchone() is not None
 
 
