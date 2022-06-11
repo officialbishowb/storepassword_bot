@@ -3,7 +3,7 @@ import sqlite3 as db
 import time
 from log import Log
 
-conn = db.connect('assets/bot.db')
+conn = db.connect('bot.db')
 
 ############################ MAIN FUNCTIONS ############################
 def create_tables():

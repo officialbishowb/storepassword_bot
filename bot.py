@@ -1,6 +1,6 @@
-import assets.db as db
-from assets.log import Log
-import assets.functions as func
+import db
+from log import Log
+import functions as func
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv

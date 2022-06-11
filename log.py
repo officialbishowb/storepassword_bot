@@ -6,7 +6,7 @@ class Log:
     """
     
     def __init__(self):
-        self.filepath = "assets/error_log.txt"
+        self.filepath = "error_log.txt"
         self.current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.makefile()
     
