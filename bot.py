@@ -6,6 +6,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
 import os
 import time
+import shutil
 
 load_dotenv() # For ENV variables
 
@@ -66,7 +67,8 @@ All available commands:
             commands+=f"""         
 <b>Admin commands:</b>
 /getlogs - Get the logs
-/clearlogs - Clear the logs"""
+/clearlogs - Clear the logs
+/dobackup - Send the backup file of the db"""
         await message.reply(commands)
         
     
@@ -158,21 +160,28 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['getlogs','clearlogs'],)
+@dp.message_handler(commands=['getlogs','clearlogs','dobackup'],)
 async def admin_msg_handler(message: types.Message):
     
     log = Log()
     
-    if(message.text.startswith("/getlogs")):
-        try:
-            await bot.send_document(message.chat.id, open(log.filepath, 'rb'))
-        except Exception as e:
-            await message.reply("<b>No logs found!</b>")
-            log.append("WARNING",repr(e))
+    if message.from_user.id in USER_ADMIN:
+        if(message.text.startswith("/getlogs")):
+            try:
+                await bot.send_document(message.chat.id, open(log.filepath, 'rb'))
+            except Exception as e:
+                await message.reply("<b>No logs found!</b>")
+                log.append("WARNING",repr(e))
 
-    else:
-        if(log.clear()):
-            await bot.send_message(message.chat.id,"<b>Logs cleared!</b>")
+        elif(message.text.startswith("/clearlogs")):
+            if(log.clear()):
+                await bot.send_message(message.chat.id,"<b>Logs cleared!</b>")
+                
+        else:
+            await message.reply("<b>Sending the .db backup file...</b>")
+            shutil.copy(db.filepath, "backup.db.bak")
+            await bot.send_document(message.chat.id, open("backup.db.bak", 'rb'))
+            
         
     
     
