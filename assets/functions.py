@@ -1,30 +1,30 @@
-from Cryptodome.Cipher import AES
-from secrets import token_bytes
-import hashlib
-from pyDes import *
+import os
 
-############# ENCRYPTION AND DECRYPTION FOR PASSWORDS #############
-def encrypt_password(string_to_encrypt,key):
-    key = sha_256hash(key)
-    cipher = AES.new(key,AES.MODE_EAX)
-    nonce = cipher.nonce
-    cipher_text,tag = cipher.encrypt_and_digest(string_to_encrypt.encode())
-    return nonce,cipher_text,tag
+from Crypto.Random import get_random_bytes
+from Crypto.Protocol.KDF import PBKDF2
 
-def decrypt_password(nonce, encrypted_text, tag, key):
-    key = sha_256hash(key)
-    cipher = AES.new(key,AES.MODE_EAX,nonce)
-    plain_text = cipher.decrypt_and_verify(encrypted_text,tag)
-    return plain_text.decode()
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+
+from dotenv import load_dotenv
+
+load_dotenv() # For ENV variables
 
 
-############# ENCRYPTION AND DECRYPTION FOR MASTER KEY #############
-def encrypt_master_key(string_to_encrypt,key):
-    return triple_des(string_to_encrypt.encrypt(key),padmode=2)
+############# SIMPLE AES ENCRYPTION AND DECRYPTION  #############
+def encrypt(data_to_encrypt, key):
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.encrypt(pad(data_to_encrypt, AES.block_size))
 
-def decrypt_master_key(string_to_decrypt,key):
-    return triple_des(string_to_decrypt.decrypt(key),padmode=2)
-    
+def decrypt(data_to_decrypt, key):
+    cipher = AES.new(key, AES.MODE_ECB)
+    return unpad(cipher.decrypt(data_to_decrypt), AES.block_size)
+
+
 ############### OTHER FUNCTIONS ###############
-def sha_256hash(string_to_hash):
-    return hashlib.sha256(string_to_hash.encode('utf-8')).digest()
+
+def generate_key():
+    return  PBKDF2(os.getenv('MASTER_KEY'), salt=os.getenv('MASTER_KEY'), dkLen=32)
+
+
+
