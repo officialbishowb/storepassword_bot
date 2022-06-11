@@ -164,7 +164,7 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['dobackup''restoredb'],)
+@dp.message_handler(commands=['dobackup''restoredb'])
 async def admin_msg_handler(message: types.Message):
     
     
