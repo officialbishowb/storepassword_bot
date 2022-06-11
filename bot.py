@@ -179,8 +179,8 @@ async def admin_msg_handler(message: types.Message):
                 
         else:
             await message.reply("<b>Sending the .db backup file...</b>")
-            shutil.copy("bot.db", "backup.db.bak")
-            await bot.send_document(message.chat.id, open("backup.db.bak", 'rb'))
+            shutil.copy("bot.db", "backup.db")
+            await bot.send_document(message.chat.id, open("backup.db", 'rb'))
             
         
     
