@@ -35,5 +35,3 @@ def generate_key():
     except Exception as e:
         Log.append("ERROR",repr(e))
 
-
-

@@ -68,7 +68,9 @@ All available commands:
 <b>Admin commands:</b>
 /getlogs - Get the logs
 /clearlogs - Clear the logs
-/dobackup - Send the backup file of the db"""
+/dobackup - Send the backup file of the db
+/restoredb - Restore the db with given .db  
+'"""
         await message.reply(commands)
         
     
@@ -166,7 +168,7 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['getlogs','clearlogs','dobackup'],)
+@dp.message_handler(commands=['getlogs','clearlogs','dobackup''restoredb'],)
 async def admin_msg_handler(message: types.Message):
     
     log = Log()
@@ -183,10 +185,21 @@ async def admin_msg_handler(message: types.Message):
             if(log.clear()):
                 await bot.send_message(message.chat.id,"<b>Logs cleared!</b>")
                 
-        else:
+        elif(message.text.startswith("/dobackup")):
             await message.reply("<b>Sending the .db backup file...</b>")
             shutil.copy("bot.db", "backup.db")
             await bot.send_document(message.chat.id, open("backup.db", 'rb'))
+        
+        else:
+            await message.reply("Send me the .db file to restore the database.")
+            dp.register_next_step_handler(message, func.restore_db)
+
+
+async def restore_db(message: types.Message):
+    file_id = message.document.file_id
+    file_path = await bot.get_file_path(file_id)
+    bot.download_file(file_path, "bot.db")
+    await message.reply("<b>Database restored!</b>")
             
         
     
