@@ -167,7 +167,7 @@ async def database_actions(message: types.Message):
 async def admin_msg_handler(message: types.Message):
     
     
-    if message.from_user.id in USER_ADMIN:
+    if int(message.from_user.id) in USER_ADMIN:
         if(message.text.startswith("/dobackup")):
             await message.reply("<b>Sending the .db backup file...</b>")
             shutil.copy("bot.db", "backup.db")
