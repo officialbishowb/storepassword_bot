@@ -90,8 +90,9 @@ async def database_actions(message: types.Message):
             user_input = [value for value in user_input if value != ""]
             service_name = ' '.join([service_name for service_name in user_input if ":" not in service_name])
             email = ''.join([email.split(":")[0] for email in user_input if ":" in email])
+            email = func.encrypt(password,db.get_master_key(message.from_user.id))
             
-            ## Do this jsut once as password can containt : as special char..
+            ## Do this just once as password can contain : as special char..
             password =""
             for i in user_input:
                 if ":" in i:
@@ -115,7 +116,7 @@ async def database_actions(message: types.Message):
             output = "<b>Your saved credentials:</b>\n"
             for i in range(len(all_datas)):
                 service_name = all_datas[i][0]
-                email = all_datas[i][1]
+                email = bytes(func.decrypt(all_datas[i][1],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted email
                 password = bytes(func.decrypt(all_datas[i][2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
                 output += f"[<code>{i+1}</code>]: <code>{service_name}</code> - <code>{email}</code>:<code>{password}</code>\n"
             await message.reply(output)
