@@ -93,7 +93,13 @@ async def database_actions(message: types.Message):
             user_input = [value for value in user_input if value != ""]
             service_name = ' '.join([service_name for service_name in user_input if ":" not in service_name])
             email = ''.join([email.split(":")[0] for email in user_input if ":" in email])
-            password = bytes(''.join([password.split(":")[1] for password in user_input if ":" in password]), 'utf-8') # Convert to bytes
+            
+            ## Do this jsut once as password can containt : as special char..
+            password =""
+            for i in user_input:
+                if ":" in i:
+                    password = bytes(i.split(":")[1])
+                    break
             password = func.encrypt(password,db.get_master_key(message.from_user.id))
             
             ## Save the data in the database
