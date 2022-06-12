@@ -1,10 +1,10 @@
+import asyncio
 import db
 import functions as func
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
-import os
-import time
+import os 
 import shutil
 
 load_dotenv() # For ENV variables
@@ -27,7 +27,7 @@ dp = Dispatcher(bot)
 @dp.message_handler(commands=['start', 'help','cmds'])
 async def send_welcome(message: types.Message):
     """
-    This handler will be called when user sends `/start` or `/help` command
+    This handler will be called when user sends `/start` , `/help` or `/cmds` command
     """
     if message.text.startswith('/start'):
         
@@ -39,16 +39,17 @@ async def send_welcome(message: types.Message):
         if(message.from_user.id in USER_ADMIN):
             db.create_tables()
             await message.reply("<b>Database created!</b>")
+            await asyncio.sleep(1)
             
             
-        await message.reply(f"""
+        await bot.edit_message_text(f"""
 Hey  @<b>{message.from_user.username}</b>, \nI'm a bot that can help you save your account credentials.
                         
 Just send me your credentials in the format <code>service name</code> and <code>email:pass</code> and I'll save them for you.
 Example: <code>/save gmail testes@gmail.com:mypassword</code>
 
 For other commands, just send me /cmds.
-                        """)
+                        """,chat_id=message.chat.id, message_id=message.message_id+1)
         
     elif(message.text.startswith('/help')):
         await message.reply(f"""
@@ -72,7 +73,7 @@ All available commands:
 /dobackup - Send the backup file of the db
 /restoredb - Restore the db with given .db
 /broadcast <code>‹message›</code> - Broadcast a message to all users"""
-        await bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id+1, text=commands)
+        await message.reply(text=commands)
         
     
 ################################ USER + ADMIN COMMANDS ################################
@@ -89,7 +90,7 @@ async def database_actions(message: types.Message):
             await message.reply("Please send me your credentials in the format /save <code>email:pass</code>!")
         else:
             await message.reply("Saving your credentials...")
-            time.sleep(1)
+            await asyncio.sleep(1)
             
             # Get service name and credentials to save
             user_input = message.text[5:].split(" ")
