@@ -35,6 +35,11 @@ async def send_welcome(message: types.Message):
         if(not db.master_key_exist(message.from_user.id)):
             key = func.generate_key()
             db.save_master_password(message.from_user.id, key)
+        
+        # Create the DB if it doesn't exist
+        if(message.from_user.id in USER_ADMIN):
+            db.create_tables()
+            await message.reply("<b>Database created!</b>")
             
         await message.reply(f"""
 Hey  @<b>{message.from_user.username}</b>, \nI'm a bot that can help you save your account credentials.
