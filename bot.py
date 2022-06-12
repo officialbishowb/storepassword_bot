@@ -128,8 +128,9 @@ async def database_actions(message: types.Message):
             await message.reply("<b>No credentials found!</b>")
         else:
             output = "<b>Your latest saved credentials:</b>\n"
+            email = bytes(func.decrypt(latest[1],db.get_master_key(message.from_user.id))).decode('utf-8')
             password = bytes(func.decrypt(latest[2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
-            output += f"[<code>1</code>]: <code>{latest[0]}</code> - <code>{latest[1]}</code>:<code>{password}</code>\n"
+            output += f"[<code>1</code>]: <code>{latest[0]}</code> - <code>{email}</code>:<code>{password}</code>\n"
             await message.reply(output)
     
     
@@ -140,8 +141,9 @@ async def database_actions(message: types.Message):
             await message.reply("<b>No credentials found!</b>")
         else:
             output = "<b>Your oldest saved credentials:</b>\n"
+            email = bytes(func.decrypt(oldest[1],db.get_master_key(message.from_user.id))).decode('utf-8')
             password = bytes(func.decrypt(oldest[2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
-            output += f"[<code>1</code>]: <code>{oldest[0]}</code> - <code>{oldest[1]}</code>:<code>{password}</code>\n"
+            output += f"[<code>1</code>]: <code>{oldest[0]}</code> - <code>{email}</code>:<code>{password}</code>\n"
             await message.reply(output)
     
     
