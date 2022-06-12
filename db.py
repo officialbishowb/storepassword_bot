@@ -155,6 +155,15 @@ def get_master_key(user_id):
     return cursor.fetchone()[0]
 
 
+########
+
+
+def get_user_ids():
+    """Get user_id from master_keys table for broadcast..
+    """
+    cursor = conn.execute('''SELECT user_id FROM master_keys''')
+    return cursor.fetchall()
+
 
 if __name__ == '__main__':
     create_tables()

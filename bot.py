@@ -64,7 +64,8 @@ All available commands:
             commands+=f"""         
 <b>Admin commands:</b>
 /dobackup - Send the backup file of the db
-/restoredb - Restore the db with given .db  """
+/restoredb - Restore the db with given .db
+/brodcast <code>‹message›</code> - Broadcast a message to all users"""
         await message.reply(commands)
         
     
@@ -159,7 +160,7 @@ async def database_actions(message: types.Message):
                 
     
 ################################ ADMIN COMMANDS ################################
-@dp.message_handler(commands=['dobackup','restoredb'])
+@dp.message_handler(commands=['dobackup','restoredb','broadcast'])
 async def admin_msg_handler(message: types.Message):
     
     if message.from_user.id in USER_ADMIN:
@@ -169,10 +170,19 @@ async def admin_msg_handler(message: types.Message):
             shutil.copy("bot.db", "backup.db")
             await bot.send_document(message.chat.id, open("backup.db", 'rb'))
         
-        else:
+        elif(message.text.startswith("/restoredb")):
             await message.reply("Send me the .db file to restore the database.")
             await message.reply("Coming soon...")
             #dp.register_next_step_handler(message, restore_db)
+        else:
+            broadcast_message = message.text[10:]
+            if broadcast_message == "":
+                await message.reply("<b>Please send me a message to broadcast.</b>")
+            else:
+                get_user_ids = db.get_user_ids()
+                for user_id in get_user_ids:
+                    await bot.send_message(user_id, broadcast_message)
+                await message.reply("<b>Broadcast sent!</b>")
 
 async def restore_db(message):
     file_id = message.document.file_id
