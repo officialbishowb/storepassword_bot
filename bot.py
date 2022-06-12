@@ -40,6 +40,7 @@ async def send_welcome(message: types.Message):
             db.create_tables()
             await message.reply("<b>Database created!</b>")
             
+            
         await message.reply(f"""
 Hey  @<b>{message.from_user.username}</b>, \nI'm a bot that can help you save your account credentials.
                         
@@ -71,7 +72,7 @@ All available commands:
 /dobackup - Send the backup file of the db
 /restoredb - Restore the db with given .db
 /broadcast <code>‹message›</code> - Broadcast a message to all users"""
-        await message.reply(commands)
+        await bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id+1, text=commands)
         
     
 ################################ USER + ADMIN COMMANDS ################################
