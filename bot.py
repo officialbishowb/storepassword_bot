@@ -94,9 +94,11 @@ async def database_actions(message: types.Message):
             ## Do this just once as password can contain : as special char..
             password =""
             for i in user_input:
+                str_to_replace = ""
                 if ":" in i:
-                    password = bytes(i.split(":")[1],'utf-8')
-                    break
+                    password = str(''.join([i for i in user_input])).replace(str_to_replace,"")
+                else:
+                    str_to_replace += i
             password = func.encrypt(password,db.get_master_key(message.from_user.id))
             
             ## Save the data in the database
