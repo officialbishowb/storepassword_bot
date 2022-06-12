@@ -65,7 +65,7 @@ All available commands:
 <b>Admin commands:</b>
 /dobackup - Send the backup file of the db
 /restoredb - Restore the db with given .db
-/brodcast <code>‹message›</code> - Broadcast a message to all users"""
+/broadcast <code>‹message›</code> - Broadcast a message to all users"""
         await message.reply(commands)
         
     
