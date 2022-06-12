@@ -181,9 +181,10 @@ async def admin_msg_handler(message: types.Message):
             else:
                 get_user_ids = db.get_user_ids()
                 for user_id in get_user_ids:
+                    print(user_id)
                     await bot.send_message(user_id, broadcast_message)
                 await message.reply("<b>Broadcast sent!</b>")
-
+ 
 async def restore_db(message):
     file_id = message.document.file_id
     file_path = await bot.get_file_path(file_id)
