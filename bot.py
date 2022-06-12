@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 import db
 import functions as func
 import logging
@@ -179,12 +180,13 @@ async def admin_msg_handler(message: types.Message):
             if broadcast_message == "":
                 await message.reply("<b>Please send me a message to broadcast.</b>")
             else:
-                get_user_ids = db.get_user_ids()
-                for user_id in get_user_ids:
-                    print(user_id)
-                    await bot.send_message(user_id, broadcast_message)
+                user_ids = db.get_user_ids()
+                for i in range(len(user_ids)):
+                    user_id = user_ids[i][0]
+                    if user_id != message.from_user.id:
+                        await bot.send_message(user_id, broadcast_message)
                 await message.reply("<b>Broadcast sent!</b>")
- 
+                
 async def restore_db(message):
     file_id = message.document.file_id
     file_path = await bot.get_file_path(file_id)
