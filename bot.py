@@ -1,4 +1,3 @@
-from tkinter.messagebox import NO
 import db
 import functions as func
 import logging
