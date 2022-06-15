@@ -179,8 +179,7 @@ async def admin_msg_handler(message: types.Message):
         
         elif(message.text.startswith("/restoredb")):
             await message.reply("Send me the .db file to restore the database.")
-            await message.reply("Coming soon...")
-            #dp.register_next_step_handler(message, restore_db)
+            dp.register_message_handler(restore_db, content_types=['document'])
         else:
             broadcast_message = message.text[10:]
             if broadcast_message == "":
@@ -195,8 +194,9 @@ async def admin_msg_handler(message: types.Message):
                 
 async def restore_db(message):
     file_id = message.document.file_id
-    file_path = await bot.get_file_path(file_id)
-    bot.download_file(file_path, "bot.db")
+    file_path = await bot.get_file(file_id)
+    file_path = file_path["file_path"]
+    await bot.download_file(file_path, "bot.db")
     await message.reply("<b>Database restored!</b>")
             
         
