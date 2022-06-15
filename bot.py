@@ -114,12 +114,13 @@ async def database_actions(message: types.Message):
         if (not all_datas):
             await message.reply("<b>No credentials found!</b>")
         else:
-            output = "<b>Your saved credentials:</b>\n"
+            output = "<b>Your saved credentials:</b>\n<tg-spoiler>"
             for i in range(len(all_datas)):
                 service_name = all_datas[i][0]
                 email = bytes(func.decrypt(all_datas[i][1],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted email
                 password = bytes(func.decrypt(all_datas[i][2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
                 output += f"[<code>{i+1}</code>]: <code>{service_name}</code> - <code>{email}</code>:<code>{password}</code>\n"
+            output += "</tg-spoiler>"
             await message.reply(output)
     
     
@@ -129,10 +130,11 @@ async def database_actions(message: types.Message):
         if (not latest):
             await message.reply("<b>No credentials found!</b>")
         else:
-            output = "<b>Your latest saved credentials:</b>\n"
+            output = "<b>Your latest saved credentials:</b>\n<tg-spoiler>"
             email = bytes(func.decrypt(latest[1],db.get_master_key(message.from_user.id))).decode('utf-8')
             password = bytes(func.decrypt(latest[2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
             output += f"[<code>1</code>]: <code>{latest[0]}</code> - <code>{email}</code>:<code>{password}</code>\n"
+            output += "</tg-spoiler>"
             await message.reply(output)
     
     
@@ -142,10 +144,11 @@ async def database_actions(message: types.Message):
         if (not oldest):
             await message.reply("<b>No credentials found!</b>")
         else:
-            output = "<b>Your oldest saved credentials:</b>\n"
+            output = "<b>Your oldest saved credentials:</b>\n<tg-spoiler>"
             email = bytes(func.decrypt(oldest[1],db.get_master_key(message.from_user.id))).decode('utf-8')
             password = bytes(func.decrypt(oldest[2],db.get_master_key(message.from_user.id))).decode('utf-8') # Get the  decrypted password
             output += f"[<code>1</code>]: <code>{oldest[0]}</code> - <code>{email}</code>:<code>{password}</code>\n"
+            output += "</tg-spoiler>"
             await message.reply(output)
     
     

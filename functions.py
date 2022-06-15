@@ -25,3 +25,5 @@ def decrypt(data_to_decrypt, key):
 def generate_key():
     return  PBKDF2(os.getenv('MASTER_KEY'), salt=os.getenv('MASTER_KEY'), dkLen=32)
 
+
+    
